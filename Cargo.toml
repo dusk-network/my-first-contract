@@ -1,0 +1,18 @@
+[package]
+name = "my-first-contract"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.71"
+description = "A simple example smart contract written for the Dusk smart contract platform and used in the docs as an illustration"
+readme = "README.md"
+license = "MPL-2.0"
+repository = "https://github.com/dusk-network/my-first-contract"
+keywords = ["dusk", "smart contract"]
+categories = ["wasm", "cryptography::cryptocurrencies"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+rusk-abi = { git = "https://github.com/dusk-network/rusk/", branch = "master", features = ["abi", "dlmalloc"] }
+rkyv = { version = "0.7", default-features = false }
