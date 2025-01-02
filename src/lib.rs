@@ -17,8 +17,9 @@
 
 #![no_std]
 
-use rusk_abi::wrap_call;
-use contract::Counter;
+use dusk_core::abi::wrap_call;
+
+use self::contract::Counter;
 
 /// This is the actual state of the contract that stores the values.
 /// It is a mutable static variable that is initialized to 0 during
@@ -52,7 +53,8 @@ mod contract {
         /// called when the contract is deployed on Dusk.
         pub fn init(&mut self, value: u32) {
             self.value = value;
-            rusk_abi::emit("INIT", value); // One can also emit events here
+            dusk_core::abi::emit("INIT", value); // One can also emit events
+                                                 // here
         }
     }
 }
