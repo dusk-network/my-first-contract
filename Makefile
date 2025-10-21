@@ -1,18 +1,20 @@
-build: ## Build contract
-	@RUSTFLAGS="-C link-args=-zstack-size=65536" \
-	cargo build \
-	  --release \
-	  --manifest-path=Cargo.toml \
-	  --color=always \
-	  -Z build-std=core,alloc \
-	  --target wasm32-unknown-unknown
-	@mkdir -p target/stripped
-	@find target/wasm32-unknown-unknown/release -maxdepth 1 -name "*.wasm" \
-	    | xargs -I % basename % \
-	    | xargs -I % wasm-tools strip -a \
-	 	          target/wasm32-unknown-unknown/release/% \
-	 	          -o target/stripped/%
+.PHONY: all build contract driver driver-js clean tree
 
-MAX_COUNTER_CONTRACT_SIZE = 8192
+all: build
 
-.PHONY: contract test
+build: contract driver-js
+
+contract:
+	@cargo build -p my-first-contract --release --target wasm32-unknown-unknown
+
+driver:
+	@cargo build -p my-first-contract-dd --release --target wasm32-unknown-unknown --features ffi
+
+driver-js:
+	@cargo build -p my-first-contract-dd --release --target wasm32-unknown-unknown --features js
+
+clean:
+	@cargo clean
+
+tree:
+	@echo "Artifacts:" && \	ls -1 contract/target/wasm32-unknown-unknown/release/* 2>/dev/null || true && \	ls -1 data-driver/target/wasm32-unknown-unknown/release/* 2>/dev/null || true
