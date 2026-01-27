@@ -15,9 +15,9 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = ["contract"]
 contract = ["dusk-core/abi-dlmalloc"]
-data-driver = ["dep:dusk-data-driver", "dusk-data-driver/wasm-export", "dusk-core/serde"]
+data-driver = ["dep:dusk-data-driver", "dusk-data-driver/wasm-export", "dusk-data-driver/alloc", "dusk-core/serde"]
 
 [dependencies]
 dusk-core = { git = "https://github.com/dusk-network/rusk/", branch = "master" }
-dusk-wasm = { path = "../../wasm" }
+dusk-forge = "0.2"
 dusk-data-driver = { git = "https://github.com/dusk-network/rusk", branch = "master", optional = true }

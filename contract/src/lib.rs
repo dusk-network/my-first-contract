@@ -12,21 +12,19 @@
 //! - `increment` which increments the counter by 1
 //! - `init` which initializes the counter with a given value during deployment
 //!
-//! This contract uses the `#[contract]` macro from `dusk-wasm` to auto-generate
+//! This contract uses the `#[contract]` macro from `dusk-forge` to auto-generate
 //! extern wrappers, schema, and data-driver implementations.
 
 #![no_std]
 
-use dusk_wasm::contract;
-
 /// The Counter contract module.
 ///
-/// The `#[contract]` macro generates:
+/// The `#[dusk_forge::contract]` macro generates:
 /// - Static `STATE` variable with the contract struct
 /// - Extern "C" wrapper functions for WASM export
 /// - `CONTRACT_SCHEMA` constant with metadata
 /// - `data_driver` module when compiled with the `data-driver` feature
-#[contract]
+#[dusk_forge::contract]
 mod counter {
     /// The Counter struct represents the values that the contract will store in
     /// its state.
