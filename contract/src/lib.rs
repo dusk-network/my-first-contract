@@ -7,36 +7,37 @@
 //! # Counter Contract
 //!
 //! This is a simple counter contract that increments a counter by 1 every time
-//! it is called. The contract has two functions:
+//! it is called. The contract has three functions:
 //! - `read_value` which reads the current value of the counter
 //! - `increment` which increments the counter by 1
 //! - `init` which initializes the counter with a given value during deployment
 //!
-//! This contract does not use any macros or frameworks which potentially
-//! abstract the underlying details for writing a contract on Dusk
+//! This contract uses the `#[contract]` macro from `dusk-forge` to auto-generate
+//! extern wrappers, schema, and data-driver implementations.
 
 #![no_std]
 
-use dusk_core::abi::wrap_call;
-
-use self::contract::Counter;
-
-/// This is the actual state of the contract that stores the values.
-/// It is a mutable static variable that is initialized to 0 during
-/// compilation.
-static mut STATE: Counter = Counter { value: 0 };
-
-mod contract {
-    use rkyv::{Archive, Serialize};
-
+/// The Counter contract module.
+///
+/// The `#[dusk_forge::contract]` macro generates:
+/// - Static `STATE` variable with the contract struct
+/// - Extern "C" wrapper functions for WASM export
+/// - `CONTRACT_SCHEMA` constant with metadata
+/// - `data_driver` module when compiled with the `data-driver` feature
+#[dusk_forge::contract]
+mod counter {
     /// The Counter struct represents the values that the contract will store in
     /// its state.
-    #[derive(Debug, Archive, Serialize)]
     pub struct Counter {
-        pub value: u32,
+        value: u32,
     }
 
     impl Counter {
+        /// Creates a new Counter instance with initial value 0.
+        pub const fn new() -> Self {
+            Self { value: 0 }
+        }
+
         /// Read the value of the counter.
         pub fn read_value(&self) -> u32 {
             self.value
@@ -53,23 +54,6 @@ mod contract {
         /// called when the contract is deployed on Dusk.
         pub fn init(&mut self, value: u32) {
             self.value = value;
-            dusk_core::abi::emit("INIT", value); // One can also emit events
-                                                 // here
         }
     }
-}
-
-#[no_mangle]
-unsafe fn read_value(arg_len: u32) -> u32 {
-    wrap_call(arg_len, |_: ()| STATE.read_value())
-}
-
-#[no_mangle]
-unsafe fn increment(arg_len: u32) -> u32 {
-    wrap_call(arg_len, |_: ()| STATE.increment())
-}
-
-#[no_mangle]
-unsafe fn init(arg_len: u32) -> u32 {
-    wrap_call(arg_len, |arg: u32| STATE.init(arg))
 }
